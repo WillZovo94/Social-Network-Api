@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Thought } = require('../models');
 
 module.exports = {
     async getAllUsers (req, res) {
@@ -14,14 +14,15 @@ module.exports = {
 
     async singleUser (req, res) {
         try {
-            const user = await User.findOne({ _id: req.params.userId })
-            .select('-__v')
-            .populate('thoughts')
-            .populate('friends')
+            const user = await User.findOne({ _id: req.params.userId }).populate('thoughts friends');
 
+            if (!user) {
+                return res.status(404).json({ message: 'Unable to find that user with that ID' });
+            };
+    
             res.status(200).json(user);
         } catch (err) {
-            res.status(500).json(err)
+            res.status(500).json(err);
         }
     },
 
@@ -63,6 +64,42 @@ module.exports = {
                 };
 
                 res.status(200).json({ message: `${userDelete} has been deleted!`})
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    },
+
+   async addFriend (req, res) {
+        try {
+            const addFriend = await User.findOneAndUpdate(
+                { _id: req.params.userId },
+                { $addToSet: { friends: req.body }},
+                { runValidators: true, new: true },
+            );
+
+            if (!addFriend) {
+                return res.status(404).json({ message: 'Unable to find user' })
+            };
+
+            res.status(200).json(user);
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    },
+
+    async delFriend (req, res) {
+        try {
+            const deleteFriend = await User.findOneAndUpdate( 
+                { _id: req.params.userId },
+                { $pull: {friends: req.params.friendId }},
+                { runValidators: true, new: true },
+            );
+
+            if (!deleteFriend) {
+                return res.status(404).json({ message: 'Unable to find user' })
+            };
+
+            res.status(200).json(deleteFriend);
         } catch (err) {
             res.status(500).json(err);
         }
