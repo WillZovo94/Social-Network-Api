@@ -14,7 +14,10 @@ module.exports = {
 
     async singleUser (req, res) {
         try {
-            const user = await User.findOne({ _id: req.params.userId }).populate('thoughts friends');
+            const user = await User.findOne({ _id: req.params.userId })
+            .select('-__v')
+            .populate('thoughts')
+            .populate('friends');
 
             if (!user) {
                 return res.status(404).json({ message: 'Unable to find that user with that ID' });
@@ -56,14 +59,14 @@ module.exports = {
 
     async deleteUser (req, res) {
         try {
-            const userDelete = await User.findOneAndRemove(
+            const userDelete = await User.findOneAndDelete (
                 { _id: req.params.userId });
 
                 if (!userDelete) {
                     return res.status(404).json({ message: "Couldn't find that user to delete!" })
                 };
 
-                res.status(200).json({ message: `${userDelete} has been deleted!`})
+                res.status(200).json({ message: 'The user has been deleted!'})
         } catch (err) {
             res.status(500).json(err);
         }
@@ -81,7 +84,7 @@ module.exports = {
                 return res.status(404).json({ message: 'Unable to find user' })
             };
 
-            res.status(200).json(user);
+            res.status(200).json(addFriend);
         } catch (err) {
             res.status(500).json(err);
         }
