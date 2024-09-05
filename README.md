@@ -18,7 +18,7 @@
 - Delete Users, friends, thoughts, and reactions!
   
 ## License
-- License under MIT License. For mor information: [license](https://opensource.org/license/MIT)
+- License under MIT License. For more information: [license](https://opensource.org/license/MIT)
   
 ## Features
 - ExpressJs
