@@ -19,7 +19,7 @@ const reactionSchema = new Schema (
         createdAt: {
             type: Date,
             default: Date.now,
-
+            get: (date) => date.toDateString(),
         }
     },
     {
@@ -30,7 +30,4 @@ const reactionSchema = new Schema (
     }
 )
 
-thoughtSchema.virtual('formattedCreatedAt')
-.get(function() {
-    return this.createdAt.toDateString();
-})
+module.exports = reactionSchema;
